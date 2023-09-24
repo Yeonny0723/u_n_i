@@ -34,7 +34,8 @@ class _TopPart extends StatefulWidget {
 
 class _TopPartState extends State<_TopPart> {
   // -- 가변값 선언
-  DateTime selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime selectedDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   final now = DateTime.now();
 
   @override
@@ -80,8 +81,15 @@ class _TopPartState extends State<_TopPart> {
                         color: Colors.white,
                         height: 300.0,
                         child: CupertinoDatePicker(
+                          initialDateTime:
+                              selectedDate, // -- 미래 날짜 선택 오류 해결 (최대 날짜)
+                          maximumDate: DateTime(
+                            now.year,
+                            now.month,
+                            now.day,
+                          ),
                           mode: CupertinoDatePickerMode.date,
-                          onDateTimeChanged: (DateTime date){
+                          onDateTimeChanged: (DateTime date) {
                             setState(() {
                               selectedDate = date;
                             });
@@ -96,12 +104,11 @@ class _TopPartState extends State<_TopPart> {
               color: Colors.red,
             )),
         Text(
-          'D+${
-          DateTime(
-            now.year,
-            now.month,
-            now.day,
-          ).difference(selectedDate).inDays + 1}',
+          'D+${DateTime(
+                now.year,
+                now.month,
+                now.day,
+              ).difference(selectedDate).inDays + 1}',
           style: TextStyle(
               color: Colors.white,
               fontFamily: 'sunflower',
