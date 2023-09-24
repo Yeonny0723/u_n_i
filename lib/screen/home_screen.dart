@@ -24,9 +24,18 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _TopPart extends StatelessWidget {
+class _TopPart extends StatefulWidget {
   // _: Private
   const _TopPart({super.key});
+
+  @override
+  State<_TopPart> createState() => _TopPartState();
+}
+
+class _TopPartState extends State<_TopPart> {
+  // -- 가변값 선언
+  DateTime selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  final now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +58,7 @@ class _TopPart extends StatelessWidget {
                 fontFamily: 'sunflower',
                 fontSize: 30.0,
               )),
-          Text('2021.12.27',
+          Text('${selectedDate.year}.${selectedDate.month}.${selectedDate.day}',
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'sunflower',
@@ -73,7 +82,9 @@ class _TopPart extends StatelessWidget {
                         child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.date,
                           onDateTimeChanged: (DateTime date){
-                            print(date);
+                            setState(() {
+                              selectedDate = date;
+                            });
                           },
                         ),
                       ),
@@ -85,7 +96,12 @@ class _TopPart extends StatelessWidget {
               color: Colors.red,
             )),
         Text(
-          'D+1',
+          'D+${
+          DateTime(
+            now.year,
+            now.month,
+            now.day,
+          ).difference(selectedDate).inDays + 1}',
           style: TextStyle(
               color: Colors.white,
               fontFamily: 'sunflower',
