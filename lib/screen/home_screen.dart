@@ -1,130 +1,142 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedDate = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.pink[100], // [<<opacity>>]
-        body: SafeArea(
-          bottom: false,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                // -- Expanded로 비율 반반
-                _TopPart(),
-                _BottomPart()
-              ],
-            ),
-          ),
-        ));
-  }
-}
-
-class _TopPart extends StatefulWidget {
-  // _: Private
-  const _TopPart({super.key});
-
-  @override
-  State<_TopPart> createState() => _TopPartState();
-}
-
-class _TopPartState extends State<_TopPart> {
-  // -- 가변값 선언
-  DateTime selectedDate =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-  final now = DateTime.now();
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      // -- Expanded로 비율 반반
-      child:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        Text(
-          'U&I',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'parisienne',
-            fontSize: 80,
+      backgroundColor: Colors.pink[200],
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              _TopPart(
+                selectedDate: selectedDate,
+                onPressed: onHeartPressed,
+              ),
+              _BottomPart(),
+            ],
           ),
         ),
-        Column(children: [
-          Text('우리 처음 만난날',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'sunflower',
-                fontSize: 30.0,
-              )),
-          Text('${selectedDate.year}.${selectedDate.month}.${selectedDate.day}',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'sunflower',
-                  fontSize: 20.0)),
-        ]),
-        IconButton(
-            iconSize: 60.0,
-            onPressed: () {
-              // -- ios. dialog (화면을 덮는 또 다른 화면)
-              showCupertinoDialog(
-                  context: context,
-                  barrierDismissible: true, // -- dialog 바깥을 누르면 꺼지도록
-                  builder: (BuildContext context) {
-                    // -- 플러터 특. 어디 정렬인지 말 안해주면 화면 다 잡아먹음.
-                    return Align(
-                      // -- 정렬해주기
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        color: Colors.white,
-                        height: 300.0,
-                        child: CupertinoDatePicker(
-                          initialDateTime:
-                              selectedDate, // -- 미래 날짜 선택 오류 해결 (최대 날짜)
-                          maximumDate: DateTime(
-                            now.year,
-                            now.month,
-                            now.day,
-                          ),
-                          mode: CupertinoDatePickerMode.date,
-                          onDateTimeChanged: (DateTime date) {
-                            setState(() {
-                              selectedDate = date;
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  });
-            },
-            icon: Icon(
-              Icons.favorite,
-              color: Colors.red,
-            )),
-        Text(
-          'D+${DateTime(
+      ),
+    );
+  }
+
+  void onHeartPressed() {
+    final DateTime now = DateTime.now();
+
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            color: Colors.white,
+            height: 300.0,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.date,
+              initialDateTime: selectedDate,
+              maximumDate: DateTime(
                 now.year,
                 now.month,
                 now.day,
-              ).difference(selectedDate).inDays + 1}',
-          style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'sunflower',
-              fontSize: 50.0,
-              fontWeight: FontWeight.w700),
-        ),
-      ]),
+              ),
+              onDateTimeChanged: (DateTime date) {
+                setState(() {
+                  selectedDate = date;
+                });
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TopPart extends StatelessWidget {
+  final DateTime selectedDate;
+  final VoidCallback onPressed;
+
+  _TopPart({
+    required this.selectedDate,
+    required this.onPressed,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final now = DateTime.now();
+
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            'U&I',
+            style: textTheme.displayLarge,
+          ),
+          Column(
+            children: [
+              Text(
+                '우리 처음 만난날',
+                style: textTheme.bodyMedium,
+              ),
+              Text(
+                '${selectedDate.year}.${selectedDate.month}.${selectedDate.day}',
+                style: textTheme.bodySmall,
+              ),
+            ],
+          ),
+          IconButton(
+            iconSize: 60.0,
+            onPressed: onPressed,
+            icon: Icon(
+              Icons.favorite,
+              color: Colors.red,
+            ),
+          ),
+          Text(
+            'D+${DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                ).difference(selectedDate).inDays + 1}',
+            style: textTheme.displayMedium,
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _BottomPart extends StatelessWidget {
-  const _BottomPart({super.key});
+  const _BottomPart({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: Image.asset('asset/img/middle_image.png'));
+    return Expanded(
+      child: Image.asset(
+        'asset/img/middle_image.png',
+      ),
+    );
   }
 }
