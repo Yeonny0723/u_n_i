@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 selectedDate: selectedDate,
                 onPressed: onHeartPressed,
                 onTapMsg: onTapMsg,
-                message: msgController.text,
+                message: _message,
               ),
               _BottomPart()
             ],
@@ -175,7 +175,7 @@ class _MiddlePart extends StatelessWidget {
               GestureDetector(
                 onTap: onTapMsg,
                 child: Text(
-                  message == "" ? "클릭하여 메시지 입력" : message,
+                  message.trim() == "" ? "클릭하여 메시지 입력" : message,
                   style: textTheme.bodyMedium,
                 ),
               ),
